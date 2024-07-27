@@ -1,6 +1,5 @@
 from enum import auto, IntEnum
 
-
 class CardColor(IntEnum):
     """
     Enum class for the color of the card
@@ -46,7 +45,8 @@ class Card:
             None
 
         Complexity:
-            Best Case Complexity:
-            Worst Case Complexity:
+            Best Case Complexity: O(1)
+            Worst Case Complexity: O(1)
         """
-        raise NotImplementedError
+        self.color = color
+        self.label = label

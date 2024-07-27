@@ -1,4 +1,6 @@
 from data_structures.referential_array import ArrayR
+from data_structures.stack_adt import ArrayStack
+from data_structures.queue_adt import CircularQueue
 from player import Player
 from card import CardColor, CardLabel, Card
 from random_gen import RandomGen
@@ -23,8 +25,13 @@ class Game:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
-
+        self.players = CircularQueue[Constants.MAX_PLAYERS]
+        self.draw_pile = ArrayStack(Constants.DECK_SIZE)
+        self.discard_pile = ArrayStack(Constants.DECK_SIZE)
+        self.current_player: Player = None
+        self.current_color: CardColor = None
+        self.current_label: CardLabel = None
+        
     def generate_cards(self) -> ArrayR[Card]:
         """
         Method to generate the cards for the game
@@ -86,7 +93,35 @@ class Game:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        raise NotImplementedError
+        # Populating self.players
+        for i in range(len(players)):
+            self.players[i] = players[i]
+
+        # Calling generate_cards
+        init_cards = ArrayR(Constants.DECK_SIZE)
+        init_cards = self.generate_cards()
+
+        # Dealing cards at the beginning of the game.
+        counter = 0
+        for i in range(Constants.NUM_CARDS_AT_INIT):
+            for player in self.players:
+                player.add_card(init_cards[counter])
+                counter += 1
+        
+        # Putting the rest of the cards in the draw pile
+        for i in range(counter, Constants.DECK_SIZE):
+            self.draw_pile.push(init_cards[i])
+
+        # Draw the first card to put on top of the discard pile
+        while True:
+            first_card = self.draw_pile.pop()
+            self.discard_pile.push()
+            if first_card.label <= 9:
+                self.current_color = first_card.color
+                self.current_label = first_card.label
+                break
+
+        
 
     def crazy_play(self, card: Card) -> None:
         """
