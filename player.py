@@ -25,7 +25,7 @@ class Player:
         """
         self.name = name
         self.position = position
-        self.hand = ArrayStack(Constants.DECK_SIZE)
+        self.hand: ArrayStack[Card] = ArrayStack(Constants.DECK_SIZE)
     
     def add_card(self, card: Card) -> None:
         """
@@ -46,16 +46,28 @@ class Player:
             self.hand.push(card)
             # Assume that the hand will never be full, as the size of the stack reaches the deck size. 
         else:
-            # Must sort through the stack to determine where to add the card. 
+            # Must sort through the stack to determine where to add the card.
+            # As the hand is a stack, this removes cards until it reaches the desired position, and then re-inserts everything back into the hand. 
+            
+            # Creating a temporary stack to hold cards that are before the desired position. 
             temp_stack = ArrayStack(Constants.DECK_SIZE)
+
+            # For loop to cycle through the whole hand (in the worst-case scenario).
             for i in range(len(self.hand)):
+                # Peeks at the card at the top of the stack.
                 temp = self.hand.peek()
+                # Checks if the card on top of the stack should be above or below the card to be inserted. 
                 if temp.color > card.color or temp.label > card.label:
+                    # If it is, put it in the temporary stack. 
                     temp_stack.push(self.hand.pop())
                 else:
+                    # Else, the card should be placed here, and the temporary stack should be emptied back into the hand. 
                     self.hand.push(card)
-                    while not temp_stack.is_empty():
-                        self.hand.push(temp_stack.pop)
+                    break
+            # Temporary stack emptied back into the hand.
+            while not temp_stack.is_empty():
+                self.hand.push(temp_stack.pop)
+                
 
     def play_card(self, index: int) -> Card:
         """
@@ -109,15 +121,11 @@ class Player:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        temp_stack = stack_adt.ArrayStack(Constants.DECK_SIZE)
+        temp_stack = ArrayStack(Constants.DECK_SIZE)
         for _ in range(len(self.hand) - 1):
             temp_stack.push(self.hand.pop())
         card = self.hand.peek()
         while not temp_stack.is_empty:
             self.hand.push(temp_stack.pop())
         return card
-    
-if __name__ == "__main__":
-    player = Player("Test", 0)
-    print(len(player))
-    print(len(player.hand))
+

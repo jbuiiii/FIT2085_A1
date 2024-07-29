@@ -2,7 +2,6 @@ import argparse
 import re
 import unittest
 
-
 if __name__ == "__main__":
 
     p = argparse.ArgumentParser()

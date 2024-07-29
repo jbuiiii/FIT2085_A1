@@ -25,9 +25,9 @@ class Game:
             Best Case Complexity:
             Worst Case Complexity:
         """
-        self.players = CircularQueue(Constants.MAX_PLAYERS)
-        self.draw_pile = ArrayStack(Constants.DECK_SIZE)
-        self.discard_pile = ArrayStack(Constants.DECK_SIZE)
+        self.players: ArrayR[Player] = ArrayR(Constants.MAX_PLAYERS)
+        self.draw_pile: ArrayStack[Card] = ArrayStack(Constants.DECK_SIZE)
+        self.discard_pile: ArrayStack[Card] = ArrayStack(Constants.DECK_SIZE)
         self.current_player: Player = None
         self.current_color: CardColor = None
         self.current_label: CardLabel = None
@@ -95,7 +95,7 @@ class Game:
         """
         # Populating self.players
         for i in range(len(players)):
-            self.players.append(players[i])
+            self.players[i] = players[i]
 
         # Calling generate_cards
         init_cards = ArrayR(Constants.DECK_SIZE)
@@ -104,12 +104,9 @@ class Game:
         # Dealing cards at the beginning of the game.
         # Counter is used to figure out how many cards need to be pushed after dealing cards.
         counter = 0
-        for i in range(Constants.NUM_CARDS_AT_INIT):
-            for j in range(len(self.players)):
-                # Add a card
-                self.players.peek().add_card(init_cards[counter])
-                # Cycle to the next player
-                self.players.append(self.players.serve())
+        for _ in range(Constants.NUM_CARDS_AT_INIT):
+            for i in range(len(players)):
+                self.players[i].add_card(init_cards[counter])
                 counter += 1
         
         # Putting the rest of the cards in the draw pile
